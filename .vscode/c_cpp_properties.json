@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "STM32L4",
+                "__ARM_ARCH_7EM__"
+            ],
+            "compilerPath": "/Users/yasamankarimi/.brew/bin/arm-none-eabi-gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            //"intelliSenseMode": "macos-clang-arm64"
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}

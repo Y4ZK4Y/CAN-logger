@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "rcc.h": "c",
+        "gpio.h": "c",
+        "systick.h": "c",
+        "vector.h": "c"
+    }
+}
