@@ -1,10 +1,7 @@
-#include "uart.h"
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
-#include <stdio.h>
-#include <stdint.h> // just in case
-
+#include "uart.h"
 
 #define BAUD_RATE 115200
 
@@ -25,52 +22,6 @@ void uart_setup(void) {
 
     usart_enable(USART2);
 }
-
-// void uart_send_char(char c) { // char or uint8_t ?
-//     usart_send_blocking(USART2, c);
-// }
-
-// void uart_send_string(const char *str) {
-//     while (*str) {
-//         uart_send_char(*str++);
-//     }
-// }
-
-// // a uart dismantle function ?
-
-
-// void uart_send_hex8(uint8_t val) {
-//     char buf[5];
-//     snprintf(buf, sizeof(buf), "%02X", val);
-//     uart_send_string(buf);
-// }
-
-// void uart_send_hex32(uint32_t val) {
-//     char buf[11];
-//     snprintf(buf, sizeof(buf), "%08lX", val);
-//     uart_send_string(buf);
-// }
-
-
-// void uart_send_uint(uint32_t val) {
-//     char buf[10];  // enough for 32-bit max: 4294967295
-//     int i = 0;
-
-//     if (val == 0) {
-//         uart_send_char('0');
-//         return;
-//     }
-
-//     while (val > 0) {
-//         buf[i++] = '0' + (val % 10);
-//         val /= 10;
-//     }
-
-//     while (i--) {
-//         uart_send_char(buf[i]);
-//     }
-// }
-
 
 
 void uart_send_char(char c) {

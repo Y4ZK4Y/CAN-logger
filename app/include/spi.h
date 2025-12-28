@@ -1,0 +1,12 @@
+#ifndef SPI_H
+#define SPI_H
+
+#include <stdint.h>
+
+void    spi_setup(void);
+//uint8_t spi_transfer(uint8_t data);
+// void spi_deselect(void);
+// void spi_select(void);
+
+
+#endif

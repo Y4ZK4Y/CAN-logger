@@ -4,6 +4,16 @@
         "system.h": "c",
         "gpio.h": "c",
         "can.h": "c",
-        "common_defines.h": "c"
+        "common_defines.h": "c",
+        "delay.h": "c",
+        "spi.h": "c",
+        "nvic.h": "c",
+        "spi_common_v2.h": "c",
+        "memorymap.h": "c",
+        "common.h": "c",
+        "stdint.h": "c",
+        "sd.h": "c",
+        "logger.h": "c",
+        "uart.h": "c"
     }
 }

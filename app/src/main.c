@@ -1,59 +1,50 @@
 #include "common_defines.h"
 #include "uart.h"
-//#include "system.h"
+#include "system.h"
 #include "can.h"
 #include "sd.h"
+#include "spi.h"
 #include "logger.h"
 #include <libopencm3/stm32/can.h>
+#include <libopencm3/stm32/spi.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 #include "uart.h"
 
 
 // int main(void) {
-//     //system_init();
-//     //clock_setup();
+//     rcc_clock_setup_pll(&rcc_hsi16_configs[RCC_CLOCK_VRANGE1_80MHZ]);
+
 //     uart_setup();
-    
-//     // can_init();
-//     // sd_init();
-//     // logger_init();
+//      uart_send_string("uart okay\r\n");
+//     spi_setup();
+//      uart_send_string("spi okay.\r\n");
 
-//     while (1) {
-//         uart_send_string("CAN setup done.\r\n");
-//         for (volatile int i = 0; i < 800000; i++);
-//         // can_frame_t frame;
-//         // if (can_receive(&frame)) {
-//         //     logger_log_frame(&frame);
-//         // }
-//     }
+//     uart_send_string("Starting SD init...\r\n");
 
+//     sd_card_init();
+
+//     while (1);
 // }
+
 
 int main(void)
 {
+    clock_setup();
+    //rcc_clock_setup_pll(&rcc_hsi16_configs[RCC_CLOCK_VRANGE1_80MHZ]);
     uart_setup();
-    can_setup();
+    for (volatile int i = 0; i < 1000000; i++);  // crude ~100ms delay
+    uart_send_string("UART test\r\n");
 
-    uint32_t id;
-    bool ext, rtr;
-    uint8_t fmi, length;
-    uint8_t data[8];
+    //can_setup();
+    //spi_setup();
+    uart_send_string("spi init done\r\n");
+    //sd_card_init();
+    //spi_send(SPI1, 0xFF);
+    uart_send_string("SD init done\r\n");
 
-    while (1) {
-        can_receive(CAN1, 0, true, &id, &ext, &rtr, &fmi, &length, data, NULL);
-
-        uart_send_string("\nCAN Frame: ID=0x");
-        uart_send_hex32(id);
-        uart_send_string(" DLC=");
-        uart_send_uint(length);
-
-        uart_send_string(" Data:");
-        for (uint8_t i = 0; i < length; i++) {
-            uart_send_string(" ");
-            uart_send_hex8(data[i]);
-        }
-
-        uart_send_string("\n");
+     while (1) {
+        uart_send_string("Hello\r\n");
+        for (volatile int i = 0; i < 1000000; i++);  // crude delay
     }
 }
-
-
