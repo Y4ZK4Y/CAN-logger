@@ -198,4 +198,48 @@ void sd_card_init(void) {
         uart_send_string(" ");
     }
     uart_send_string("\r\n");
+
+
+
+    uart_send_string("\r\n");
+
+    // CMD55 + ACMD41 loop - initialize until card ready
+    uart_send_string("CMD55 + ACMD41 loop...\r\n");
+    uint8_t acmd41_r1 = 0x01;
+    int attempts = 0;
+    while (acmd41_r1 != 0x00 && attempts < 100) {
+        // CMD55 - application command prefix
+        cs_low();
+        spi_transfer(0x77);  // CMD55
+        spi_transfer(0); spi_transfer(0); spi_transfer(0); spi_transfer(0);
+        spi_transfer(0x01);  // dummy CRC
+        for (int i = 0; i < 10; i++) {
+            acmd41_r1 = spi_transfer(0xFF);
+            if ((acmd41_r1 & 0x80) == 0) break;
+        }
+        cs_high();
+
+        // ACMD41 - init with HCS=1 (SDHC support)
+        cs_low();
+        spi_transfer(0x69);  // ACMD41
+        spi_transfer(0x40);  // HCS=1
+        spi_transfer(0); spi_transfer(0); spi_transfer(0);
+        spi_transfer(0x01);  // dummy CRC
+        for (int i = 0; i < 10; i++) {
+            acmd41_r1 = spi_transfer(0xFF);
+            if ((acmd41_r1 & 0x80) == 0) break;
+        }
+        cs_high();
+
+        attempts++;
+        delay_ms(10);
+    }
+
+    uart_send_string("ACMD41 done, R1: 0x");
+    uart_send_hex8(acmd41_r1);
+    uart_send_string(" attempts: ");
+    uart_send_uint(attempts);
+    uart_send_string("\r\n");
+
+    uart_send_string("SD init done\r\n");
 }
