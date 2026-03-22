@@ -105,15 +105,10 @@ static void cs_low(void) {
 
 // sends 80 spi clock pulses (10 x 8 bits) with cs high - required by sd card specs top enter spi mode
 static void sd_send_dummy_clock(void) {
-    uart_send_string("isnide send dummy func\r\n");
-    cs_high(); //ddeselect card
+    cs_high();
     for (int i = 0; i < 10; i++) {
-        uart_send_string("dummy: xfer");
-        uart_send_hex8(i);
-        uart_send_string("\r\n");
-        spi_transfer(0xFF); // send dummy bytes
+        spi_transfer(0xFF);
     }
-    uart_send_string("end of send dummy func\r\n");
 }
 
 
@@ -242,4 +237,94 @@ void sd_card_init(void) {
     uart_send_string("\r\n");
 
     uart_send_string("SD init done\r\n");
+
+
+
+    uart_send_string("SD init done\r\n");
+
+    uart_send_string("SD init done\r\n");
+
+    // CMD16 - set block length to 512 (required for SDSC)
+    uart_send_string("CMD16 set block len...\r\n");
+    cs_low();
+    spi_transfer(0x50);  // CMD16
+    spi_transfer(0); spi_transfer(0); spi_transfer(0x02); spi_transfer(0);  // 512 = 0x200
+    spi_transfer(0x01);  // dummy CRC
+    uint8_t cmd16_r1 = 0xFF;
+    for (int i = 0; i < 10; i++) {
+        cmd16_r1 = spi_transfer(0xFF);
+        if ((cmd16_r1 & 0x80) == 0) break;
+    }
+    cs_high();
+    uart_send_string("CMD16 R1: 0x");
+    uart_send_hex8(cmd16_r1);
+    uart_send_string("\r\n");
+
+
+
+
+    // CMD17 - read single block (sector 0)
+    uart_send_string("Reading block 0...\r\n");
+    cs_low();
+    spi_transfer(0x51);  // CMD17
+    spi_transfer(0); spi_transfer(0); spi_transfer(0); spi_transfer(0);  // address 0
+    spi_transfer(0x01);  // dummy CRC
+
+    uint8_t cmd17_r1 = 0xFF;
+    for (int i = 0; i < 10; i++) {
+        cmd17_r1 = spi_transfer(0xFF);
+        if ((cmd17_r1 & 0x80) == 0) break;
+    }
+
+    if (cmd17_r1 != 0x00) {
+        uart_send_string("CMD17 error R1: 0x");
+        uart_send_hex8(cmd17_r1);
+        uart_send_string("\r\n");
+        cs_high();
+        return;
+    }
+
+    uart_send_string("CMD17 R1: 0x");
+    uart_send_hex8(cmd17_r1);
+    uart_send_string("\r\n");
+
+    delay_ms(15);  /* Give card time to fetch block from flash */
+    uart_send_string("Waiting for data token...\r\n");
+
+    /* Wait for data token 0xFE (ignore error tokens like 0x00, keep clocking) */
+    uint8_t token = 0xFF;
+    uint32_t n;
+    for (n = 0; n < 65535; n++) {
+        token = spi_transfer(0xFF);
+        if (token == 0xFE) break;
+    }
+    if (token != 0xFE) {
+        uart_send_string("No data token, got: 0x");
+        uart_send_hex8(token);
+        uart_send_string(" after ");
+        uart_send_uint(n);
+        uart_send_string(" bytes\r\n");
+        cs_high();
+        return;
+    }
+
+    uart_send_string("Got 0xFE, reading block...\r\n");
+
+    /* Static to avoid 512-byte stack allocation (small STM32 stack) */
+    static uint8_t block[512];
+    for (int i = 0; i < 512; i++) {
+        block[i] = spi_transfer(0xFF);
+    }
+    /* CRC (2 bytes) - discard */
+    spi_transfer(0xFF);
+    spi_transfer(0xFF);
+    cs_high();
+
+    uart_send_string("Block 0 OK, first 16 bytes (hex): ");
+    for (int i = 0; i < 16; i++) {
+        uart_send_hex8(block[i]);
+        uart_send_string(" ");
+    }
+    uart_send_string("\r\n");
+
 }
