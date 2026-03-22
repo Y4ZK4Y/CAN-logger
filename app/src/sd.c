@@ -105,13 +105,15 @@ static void cs_low(void) {
 
 // sends 80 spi clock pulses (10 x 8 bits) with cs high - required by sd card specs top enter spi mode
 static void sd_send_dummy_clock(void) {
-    //uart_send_string("isnide send dummy func\r\n");
+    uart_send_string("isnide send dummy func\r\n");
     cs_high(); //ddeselect card
     for (int i = 0; i < 10; i++) {
-        //uart_send_string("isnide spi transfer loop\r\n");
+        uart_send_string("dummy: xfer");
+        uart_send_hex8(i);
+        uart_send_string("\r\n");
         spi_transfer(0xFF); // send dummy bytes
     }
-    //uart_send_string("end of send dummy func\r\n");
+    uart_send_string("end of send dummy func\r\n");
 }
 
 
@@ -122,9 +124,9 @@ CMD0 send
 Wait for valid response
 */
 void sd_card_init(void) {
-    uart_send_string("isnide cd_init func\r\n");
+    uart_send_string("isnide sd_card_init func\r\n");
     // cs pin as output
-    gpio_mode_setup(SPI1_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, SPI1_CS); // setting PA4 as output pin so we can control cs manually
+    // gpio_mode_setup(SPI1_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, SPI1_CS); // setting PA4 as output pin so we can control cs manually
 
     // send 80 dummy clocks with cs high
     uart_send_string("Sending dummy...\r\n");

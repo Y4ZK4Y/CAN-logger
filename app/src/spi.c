@@ -80,6 +80,9 @@ void spi_setup(void) {
 
     // gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI1_MISO |SPI1_SCK | SPI1_MOSI);
     // gpio_set_af(SPI1_PORT, GPIO_AF5, SPI1_MISO |SPI1_SCK | SPI1_MOSI);
+    // CS (PA4) as output, high (deselected) - do this BEFORE enabling SPI
+    gpio_mode_setup(SPI1_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, SPI1_CS);
+    gpio_set(SPI1_PORT, SPI1_CS);  // Deselect
     gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI1_SCK | SPI1_MOSI);
     gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_PULLUP, SPI1_MISO);
     gpio_set_af(SPI1_PORT, GPIO_AF5, SPI1_SCK | SPI1_MOSI | SPI1_MISO);
