@@ -39,9 +39,15 @@ int main(void)
     //can_setup();
     spi_setup();
     uart_send_string("spi init done\r\n");
-    sd_card_init();
+    //sd_card_init();
+    uart_send_string("SPI test: sending 0xFF\r\n");
+    uint8_t x = spi_transfer(0xFF);  // You need to expose spi_transfer or add a test
+    uart_send_string("SPI read back: 0x");
+    uart_send_hex8(x);
+    uart_send_string("\r\n");
+    uart_send_string("SPI test done\r\n");
     //spi_send(SPI1, 0xFF);
-    uart_send_string("SD init done\r\n");
+    //uart_send_string("SD init done\r\n");
 
      while (1) {
         uart_send_string("Hello\r\n");

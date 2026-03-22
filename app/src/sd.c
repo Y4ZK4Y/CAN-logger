@@ -94,12 +94,14 @@ static void cs_low(void) {
 
 
 // standrad pattern for full duplex spi - send one byte - simoultaneously rad one byte 
-static uint8_t spi_transfer(uint8_t data) {
-    //uart_send_string("isnide spi_tarnsfer func: \r\n");
-    spi_send(SPI1, data);
-    //uart_send_string("end of spi_tarnsfer func: \r\n");
-    return spi_read(SPI1);
-}
+// static uint8_t spi_transfer(uint8_t data) {
+//     //uart_send_string("isnide spi_tarnsfer func: \r\n");
+//     spi_send(SPI1, data);
+//     //uart_send_string("end of spi_tarnsfer func: \r\n");
+//     return spi_read(SPI1);
+// }
+
+
 
 // sends 80 spi clock pulses (10 x 8 bits) with cs high - required by sd card specs top enter spi mode
 static void sd_send_dummy_clock(void) {

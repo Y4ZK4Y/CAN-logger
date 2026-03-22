@@ -41,5 +41,13 @@ BMP_PORT	?=
 #STLINK_PORT	?= :4242
 
 
+################################################################################
+# Out-of-tree build: must set BEFORE rules.mk so %.elf gets correct prereqs
+BUILD_DIR := build
+override OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(shell find $(SRC_DIR) -name '*.c'))
+
+
+
 include rules.mk
 include build-dir.mk
+

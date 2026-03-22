@@ -8,8 +8,6 @@ BUILD_DIR ?= build
 # Override OBJS to use build/
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 
-# Override LDSCRIPT to use build/
-LDSCRIPT := $(BUILD_DIR)/generated.$(DEVICE).ld
 
 # Override targets to output to build/
 elf: $(BUILD_DIR)/$(BINARY).elf
@@ -22,11 +20,6 @@ GENERATED_BINARIES := $(BUILD_DIR)/$(BINARY).elf $(BUILD_DIR)/$(BINARY).bin \
 	$(BUILD_DIR)/$(BINARY).hex $(BUILD_DIR)/$(BINARY).srec \
 	$(BUILD_DIR)/$(BINARY).list $(BUILD_DIR)/$(BINARY).map
 
-# Linker script in build/
-$(BUILD_DIR)/generated.$(DEVICE).ld: $(OPENCM3_DIR)/ld/linker.ld.S $(DEVICES_DATA)
-	@mkdir -p $(BUILD_DIR)
-	@printf "  GENLNK  $(DEVICE)\n"
-	$(Q)$(CPP) $(ARCH_FLAGS) $(shell $(OPENCM3_DIR)/scripts/genlink.py $(DEVICES_DATA) $(DEVICE) DEFS) -P -E $< -o $@
 
 # Compile .c -> build/*.o with .d in build/
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
