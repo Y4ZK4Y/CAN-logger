@@ -1,9 +1,9 @@
-#include "spi.h"
 #include <libopencm3/stm32/spi.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <stdint.h>
 #include "uart.h"
+#include "spi.h"
 
 /*
 SPA PINS 
@@ -73,17 +73,20 @@ void spi_setup(void) {
     rcc_periph_clock_enable(RCC_GPIOA);
     rcc_periph_clock_enable(RCC_SPI1);
 
-    gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI1_MISO |SPI1_SCK | SPI1_MOSI);
-    gpio_set_af(SPI1_PORT, GPIO_AF5, SPI1_MISO |SPI1_SCK | SPI1_MOSI);
+    // gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI1_MISO |SPI1_SCK | SPI1_MOSI);
+    // gpio_set_af(SPI1_PORT, GPIO_AF5, SPI1_MISO |SPI1_SCK | SPI1_MOSI);
+    gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_NONE, SPI1_SCK | SPI1_MOSI);
+    gpio_mode_setup(SPI1_PORT, GPIO_MODE_AF, GPIO_PUPD_PULLUP, SPI1_MISO);
+    gpio_set_af(SPI1_PORT, GPIO_AF5, SPI1_SCK | SPI1_MOSI | SPI1_MISO);
 
     //spi_reset(SPI1);
     spi_init_master(SPI1,
                     SPI_CR1_BAUDRATE_FPCLK_DIV_256, // slow start for sd init - br - clock speed, divided by 256 Slow clock at init (≤ 400 kHz recommended; 48 MHz ÷ 256 ≈ 187 kHz)
                     SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE, //cpol - clock idle level low - 0
-                    SPI_CR1_CPHA_CLK_TRANSITION_1, // cpha - data read on first edge - 0
+                    SPI_CR1_CPHA_CLK_TRANSITION_0, // cpha - data read on first edge - 0
                     //SPI_CR1_DFF_8BIT, // 8bit frame size - DFF is not required on STM32L4 — it's always 8-bit for libopencm3 unless you explicitly configure for 16-bit (which we’re not doing).
                     SPI_CR1_MSBFIRST); // lsbfirst - here msb first
-    //spi_enable_software_slave_management(SPI1);
-    //spi_set_nss_high(SPI1); // default cs high
+    spi_enable_software_slave_management(SPI1);
+    spi_set_nss_high(SPI1); // default cs high
     spi_enable(SPI1);
 }

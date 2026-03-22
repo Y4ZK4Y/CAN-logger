@@ -42,3 +42,4 @@ BMP_PORT	?=
 
 
 include rules.mk
+include build-dir.mk

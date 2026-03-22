@@ -37,9 +37,9 @@ int main(void)
     uart_send_string("UART test\r\n");
 
     //can_setup();
-    //spi_setup();
+    spi_setup();
     uart_send_string("spi init done\r\n");
-    //sd_card_init();
+    sd_card_init();
     //spi_send(SPI1, 0xFF);
     uart_send_string("SD init done\r\n");
 

@@ -95,21 +95,21 @@ static void cs_low(void) {
 
 // standrad pattern for full duplex spi - send one byte - simoultaneously rad one byte 
 static uint8_t spi_transfer(uint8_t data) {
-    uart_send_string("isnide spi_tarnsfer func: \r\n");
+    //uart_send_string("isnide spi_tarnsfer func: \r\n");
     spi_send(SPI1, data);
-    uart_send_string("end of spi_tarnsfer func: \r\n");
+    //uart_send_string("end of spi_tarnsfer func: \r\n");
     return spi_read(SPI1);
 }
 
 // sends 80 spi clock pulses (10 x 8 bits) with cs high - required by sd card specs top enter spi mode
 static void sd_send_dummy_clock(void) {
-    uart_send_string("isnide send dummy func\r\n");
+    //uart_send_string("isnide send dummy func\r\n");
     cs_high(); //ddeselect card
     for (int i = 0; i < 10; i++) {
-        uart_send_string("isnide spi transfer loop\r\n");
+        //uart_send_string("isnide spi transfer loop\r\n");
         spi_transfer(0xFF); // send dummy bytes
     }
-    uart_send_string("end of send dummy func\r\n");
+    //uart_send_string("end of send dummy func\r\n");
 }
 
 
@@ -136,7 +136,7 @@ void sd_card_init(void) {
     spi_transfer(0x40 | 0); //cmd0
     spi_transfer(0);spi_transfer(0);spi_transfer(0);spi_transfer(0); // Arg = 0
     spi_transfer(0x95); // pre calculated CRC for CMD0
-    delay_ms(10);
+    //delay_ms(10);
     /*
     0x40 | 0 → 0x40: Command 0 (with proper start bit format)
     Four zero bytes: CMD0 takes a 32-bit argument, which is 0
@@ -144,10 +144,10 @@ void sd_card_init(void) {
 */
 
     // read response
-    uint8_t r;
+    uint8_t r = 0xFF;
     for (int i = 0; i < 10; i++) {
         r = spi_transfer(0xFF); // send dummy to read
-        if (r == 0x01) {
+        if ((r & 0x80) == 0) {
             break ;
         }
         /*
