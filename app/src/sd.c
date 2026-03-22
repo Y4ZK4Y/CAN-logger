@@ -165,4 +165,37 @@ void sd_card_init(void) {
     uart_send_string("CMD0 response: 0x");
     uart_send_hex8(r);
     uart_send_string("\r\n");
+
+    // CMD8 - voltage check (for modern SDv2 cards)
+    uart_send_string("Sending CMD8...\r\n");
+    cs_low();
+    spi_transfer(0x48);           // CMD8
+    spi_transfer(0x00);
+    spi_transfer(0x00);
+    spi_transfer(0x01);
+    spi_transfer(0xAA);
+    spi_transfer(0x87);           // CRC
+
+    // Wait for valid R1 (bit 7 = 0), up to 10 bytes
+    uint8_t r1 = 0xFF;
+    for (int i = 0; i < 10; i++) {
+        r1 = spi_transfer(0xFF);
+        if ((r1 & 0x80) == 0)
+            break;
+    }
+    // Read remaining 4 bytes of R7
+    uint8_t r7[4];
+    for (int i = 0; i < 4; i++) {
+        r7[i] = spi_transfer(0xFF);
+    }
+    cs_high();
+
+    uart_send_string("CMD8 R1: 0x");
+    uart_send_hex8(r1);
+    uart_send_string(" R7: ");
+    for (int i = 0; i < 4; i++) {
+        uart_send_hex8(r7[i]);
+        uart_send_string(" ");
+    }
+    uart_send_string("\r\n");
 }
