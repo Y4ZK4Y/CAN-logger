@@ -18,3 +18,7 @@ Ctrl+A, then K, then Y to confirm.
 
 TODO: cleanup the build, super messy in app/src/
 
+resources:
+https://yaseen.ly/writing-data-to-sdcards-without-a-filesystem-spi/
+https://elm-chan.org/docs/mmc/mmc_e.html
+https://satoshinm.github.io/blog/180108_usb_power_usb_breakout_boards_for_supplying_power_to_your_projects.html

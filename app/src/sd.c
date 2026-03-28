@@ -15,6 +15,21 @@
 #define SPI1_PORT   GPIOA
 
 
+
+// CMD0 - reset card back to idle
+// CMD1 - send ACMD41 - initialize card
+// CMD8 - voltage check - check if card is SDv2 or SDv1
+// CMD55 - application command prefix - used to send ACMD commands
+
+// CMD17 - read a single block
+// CMD18 - read multiple blocks
+// CMD24 - write a single block
+
+// CMD24 - write multiple blocks
+// CMD25 - write a single block
+
+
+
 // uint8_t sd_send_command(uint8_t cmd, uint32_t arg, uint8_t crc) {
 //     uint8_t response;
 //     for (volatile int i = 0; i < 100000; i++); // crude delay ~ few ms
